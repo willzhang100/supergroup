@@ -4,7 +4,7 @@ Draft the greatest band ever assembled — **🎤 Vocals · 🎸 Guitar · 🎻 
 
 A single self-contained `index.html`. No build, no backend, no accounts. Mobile-first. Seeded so a share link replays the exact same game.
 
-- **Play:** open `index.html` (or the deployed URL) on a phone.
+- **Play:** **https://willzhang100.github.io/supergroup/** (or open `index.html` locally).
 - **Design:** see [DESIGN.md](DESIGN.md).
 
 Built in ~an hour as a v0.1 to share with friends. See DESIGN.md → Roadmap for what's next.
