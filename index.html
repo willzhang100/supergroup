@@ -1,0 +1,372 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1">
+<meta name="theme-color" content="#0e0e13">
+<title>SUPERGROUP — draft a band, beat the House</title>
+<style>
+  :root{
+    --bg:#0e0e13; --panel:#191922; --panel2:#20202c; --line:#2c2c3a;
+    --txt:#f3f2f8; --dim:#9a99ab; --accent:#ff4d7d; --accent2:#7c5cff;
+    --gold:#ffd15c; --good:#3ddc97; --bad:#ff6b6b;
+    --r:16px; --shadow:0 8px 30px rgba(0,0,0,.45);
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent}
+  html,body{margin:0;height:100%}
+  body{
+    background:radial-gradient(120% 80% at 50% -10%, #241b33 0%, var(--bg) 55%) fixed;
+    color:var(--txt);
+    font:16px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    display:flex; justify-content:center;
+    padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom);
+    overscroll-behavior:none;
+  }
+  #app{width:100%; max-width:480px; min-height:100dvh; display:flex; flex-direction:column;
+       padding:18px 18px 26px}
+  .screen{flex:1; display:flex; flex-direction:column; animation:fade .3s ease}
+  @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+  /* ---- header / brand ---- */
+  .brand{font-weight:900; letter-spacing:.14em; font-size:22px;
+    background:linear-gradient(90deg,var(--accent),var(--gold),var(--accent2));
+    -webkit-background-clip:text; background-clip:text; color:transparent; text-align:center}
+  .tag{text-align:center;color:var(--dim);font-size:13px;margin-top:4px}
+
+  /* ---- start ---- */
+  .start{flex:1; display:flex; flex-direction:column; justify-content:center; gap:22px; text-align:center}
+  .hero{font-size:40px; font-weight:900; letter-spacing:.1em; line-height:1.05;
+    background:linear-gradient(90deg,var(--accent),var(--gold) 55%,var(--accent2));
+    -webkit-background-clip:text;background-clip:text;color:transparent}
+  .lede{color:var(--dim); font-size:15px; max-width:320px; margin:0 auto}
+  .roles-row{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;font-size:13px;color:var(--dim)}
+  .roles-row span{background:var(--panel);border:1px solid var(--line);padding:6px 10px;border-radius:999px}
+  .challenge{background:var(--panel);border:1px solid var(--accent);border-radius:var(--r);
+    padding:12px 14px;font-size:14px}
+  .challenge b{color:var(--gold)}
+
+  button.big{
+    width:100%; padding:17px; border:0; border-radius:14px; font-size:18px; font-weight:800;
+    letter-spacing:.03em; color:#160e14;
+    background:linear-gradient(90deg,var(--accent),var(--gold));
+    box-shadow:var(--shadow); cursor:pointer; transition:transform .08s}
+  button.big:active{transform:scale(.98)}
+  button.ghost{width:100%;padding:14px;border:1px solid var(--line);border-radius:12px;
+    background:var(--panel);color:var(--txt);font-weight:700;font-size:15px;cursor:pointer}
+  button.ghost:active{transform:scale(.98)}
+  button:disabled{opacity:.4}
+
+  /* ---- draft ---- */
+  .topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+  .dots{display:flex;gap:6px}
+  .dot{width:9px;height:9px;border-radius:50%;background:var(--line)}
+  .dot.done{background:var(--good)}
+  .dot.now{background:var(--gold);box-shadow:0 0 0 3px rgba(255,209,92,.18)}
+  .role-h{text-align:center;margin:6px 0 4px}
+  .role-emoji{font-size:40px}
+  .role-name{font-weight:900;letter-spacing:.18em;font-size:19px;margin-top:2px}
+  .role-sub{color:var(--dim);font-size:13px;margin-top:2px}
+  .cards{display:flex;flex-direction:column;gap:12px;margin-top:18px;flex:1;justify-content:center}
+  .card{
+    display:flex;align-items:center;gap:14px;text-align:left;
+    background:linear-gradient(180deg,var(--panel2),var(--panel));
+    border:1px solid var(--line);border-radius:var(--r);padding:16px;cursor:pointer;
+    transition:transform .08s,border-color .15s}
+  .card:active{transform:scale(.985)}
+  .card:hover{border-color:var(--accent)}
+  .card .num{font-size:22px;width:30px;text-align:center;opacity:.5}
+  .card .name{font-weight:800;font-size:19px}
+  .card .genre{margin-top:3px;font-size:12px;color:var(--accent);
+    background:rgba(255,77,125,.12);display:inline-block;padding:2px 9px;border-radius:999px}
+  .card .hint{font-size:12px;color:var(--dim);margin-top:5px}
+  .pick-badge{margin-left:auto;font-size:12px;color:var(--dim)}
+  .draft-foot{margin-top:16px;display:flex;flex-direction:column;gap:8px}
+  .reroll{display:flex;align-items:center;justify-content:center;gap:8px}
+  .rerolls{display:flex;gap:5px}
+  .token{width:10px;height:10px;border-radius:50%;background:var(--accent2)}
+  .token.used{background:var(--line)}
+
+  /* ---- reveal ---- */
+  h2.res{text-align:center;font-size:28px;font-weight:900;letter-spacing:.05em;margin:4px 0}
+  .res.win{color:var(--good)} .res.lose{color:var(--bad)} .res.tie{color:var(--gold)}
+  .scoreline{display:flex;justify-content:center;gap:18px;align-items:baseline;margin:2px 0 14px}
+  .scoreline .me{font-size:34px;font-weight:900}
+  .scoreline .vs{color:var(--dim);font-size:13px}
+  .scoreline .them{font-size:22px;font-weight:800;color:var(--dim)}
+  .lineup{display:flex;flex-direction:column;gap:8px}
+  .row{display:flex;align-items:center;gap:12px;background:var(--panel);border:1px solid var(--line);
+    border-radius:12px;padding:10px 12px;opacity:0;transform:translateY(8px);
+    animation:pop .35s ease forwards}
+  @keyframes pop{to{opacity:1;transform:none}}
+  .row .re{font-size:20px;width:26px;text-align:center}
+  .row .info{flex:1;min-width:0}
+  .row .nm{font-weight:800}
+  .row .cr{font-size:11.5px;color:var(--dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .row .rt{font-weight:900;font-size:20px;min-width:34px;text-align:right}
+  .rt.hi{color:var(--gold)}
+  .chem{text-align:center;margin:12px 0;font-size:14px;color:var(--good)}
+  .chem.none{color:var(--dim)}
+  .house{margin-top:14px;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:10px 12px}
+  .house h3{margin:0 0 6px;font-size:12px;letter-spacing:.14em;color:var(--dim);font-weight:800}
+  .house .hrow{display:flex;justify-content:space-between;font-size:13px;padding:2px 0;color:var(--dim)}
+  .foot{margin-top:18px;display:flex;flex-direction:column;gap:9px}
+  .toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#fff;color:#111;
+    padding:10px 16px;border-radius:999px;font-weight:700;font-size:14px;box-shadow:var(--shadow);
+    opacity:0;pointer-events:none;transition:opacity .2s}
+  .toast.show{opacity:1}
+  .credit{text-align:center;color:var(--dim);font-size:11px;margin-top:18px}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<div class="toast" id="toast"></div>
+
+<script>
+/* ============================ DATA ============================
+   Legend Rating (0-100) is a curated, internally-consistent ground truth,
+   each anchored to a real credential shown on reveal. Tuned for play. */
+const ROLES = [
+  {key:"Vocals",   emoji:"🎤", sub:"the voice out front"},
+  {key:"Guitar",   emoji:"🎸", sub:"the six-string hero"},
+  {key:"Bass",     emoji:"🎻", sub:"the low-end anchor"},
+  {key:"Drums",    emoji:"🥁", sub:"the engine room"},
+  {key:"Producer", emoji:"🎛️", sub:"the mastermind"},
+];
+
+const POOL = {
+Vocals:[
+  ["Michael Jackson",98,"Pop","King of Pop · 13 Hot 100 #1s, Thriller = best-seller ever"],
+  ["Freddie Mercury",95,"Rock","Queen frontman · one of rock's greatest voices"],
+  ["Beyoncé",95,"Pop","Most Grammy-wins of anyone (32)"],
+  ["Elvis Presley",94,"Rock","King of Rock 'n' Roll · most RIAA-certified solo act"],
+  ["Whitney Houston",92,"Pop","Only artist with 7 straight #1 singles"],
+  ["Aretha Franklin",91,"Soul","Queen of Soul · first woman in the Rock Hall"],
+  ["Taylor Swift",92,"Pop","Most #1 albums by a woman"],
+  ["Adele",89,"Pop","Diamond album '21' · 16 Grammys"],
+  ["Mariah Carey",89,"Pop","19 Hot 100 #1s — most for a solo artist"],
+  ["David Bowie",88,"Rock","Ziggy Stardust · the great shapeshifter"],
+  ["Robert Plant",84,"Rock","Led Zeppelin's golden god"],
+  ["Amy Winehouse",82,"Soul","'Back to Black' · 5 Grammys in one night"],
+  ["Freddie Gibbs",66,"Hip-Hop","Critics' darling of modern rap"],
+],
+Guitar:[
+  ["Jimi Hendrix",96,"Rock","Reinvented the electric guitar"],
+  ["Jimmy Page",92,"Rock","Led Zeppelin · wrote 'Stairway to Heaven'"],
+  ["Prince",93,"Funk","Purple Rain · shredder and showman"],
+  ["Eddie Van Halen",90,"Rock","'Eruption' · tapping pioneer"],
+  ["Chuck Berry",88,"Rock","Father of rock 'n' roll guitar"],
+  ["Eric Clapton",87,"Blues","Only 3-time Rock Hall inductee"],
+  ["Nile Rodgers",86,"Disco","Chic · played on 500M+ selling records"],
+  ["Keith Richards",85,"Rock","The Rolling Stones' riff machine"],
+  ["B.B. King",85,"Blues","King of the Blues"],
+  ["David Gilmour",84,"Rock","Pink Floyd · the 'Comfortably Numb' solo"],
+  ["Slash",83,"Rock","Guns N' Roses · top-hat riffs"],
+  ["St. Vincent",74,"Art Rock","Grammy-winning guitar auteur"],
+],
+Bass:[
+  ["Paul McCartney",96,"Rock","A Beatle · best-selling songwriter in history"],
+  ["Sting",84,"Rock","The Police · 17 Grammys, bass + voice"],
+  ["Flea",80,"Funk","Red Hot Chili Peppers' engine"],
+  ["John Paul Jones",78,"Rock","Led Zeppelin's secret weapon"],
+  ["Geddy Lee",76,"Rock","Rush · bass and vocals at once"],
+  ["John Entwistle",76,"Rock","The Who · 'Thunderfingers'"],
+  ["Jaco Pastorius",75,"Jazz","Redefined the electric bass"],
+  ["Bootsy Collins",74,"Funk","P-Funk · the face of funk bass"],
+  ["Victor Wooten",70,"Jazz","5-time Grammy bass virtuoso"],
+  ["Larry Graham",69,"Funk","Invented slap bass"],
+  ["Les Claypool",68,"Funk","Primus · bass as lead instrument"],
+  ["Thundercat",66,"Jazz","Grammy-winning modern bass star"],
+],
+Drums:[
+  ["Dave Grohl",87,"Rock","Nirvana drummer, Foo Fighters frontman"],
+  ["Phil Collins",85,"Pop","Genesis engine + solo superstar"],
+  ["John Bonham",85,"Rock","Led Zeppelin · the heaviest feel in rock"],
+  ["Ringo Starr",82,"Rock","A Beatle · feel over flash"],
+  ["Neil Peart",80,"Rock","Rush · 'the Professor'"],
+  ["Keith Moon",78,"Rock","The Who · glorious chaos"],
+  ["Questlove",78,"Hip-Hop","The Roots · Oscar-winning polymath"],
+  ["Buddy Rich",75,"Jazz","The greatest big-band drummer"],
+  ["Travis Barker",74,"Punk","Blink-182 · pop-punk's icon"],
+  ["Stewart Copeland",72,"Rock","The Police · reggae-rock groove"],
+  ["Sheila E.",70,"Funk","Prince's drummer · 'The Glamorous Life'"],
+  ["Chad Smith",69,"Funk","Red Hot Chili Peppers' pocket"],
+],
+Producer:[
+  ["Quincy Jones",95,"Pop","Produced 'Thriller' · 28 Grammys"],
+  ["Max Martin",91,"Pop","One of the most #1 hits of any songwriter"],
+  ["George Martin",90,"Rock","The Beatles' 'fifth Beatle'"],
+  ["Dr. Dre",90,"Hip-Hop","N.W.A, Aftermath, Beats · defined West Coast"],
+  ["Rick Rubin",89,"Hip-Hop","Def Jam co-founder · genre-spanning"],
+  ["Kanye West",88,"Hip-Hop","'College Dropout' → era-defining production"],
+  ["Pharrell Williams",87,"Pop","The Neptunes · 'Happy'"],
+  ["Timbaland",86,"Hip-Hop","Missy, Justin & Aaliyah's architect"],
+  ["Missy Elliott",84,"Hip-Hop","Rapper-producer · Songwriters HOF"],
+  ["Berry Gordy",83,"Soul","Founded Motown"],
+  ["Mark Ronson",80,"Funk","'Uptown Funk' · Amy Winehouse"],
+  ["Metro Boomin",78,"Hip-Hop","The defining trap producer"],
+],
+};
+
+/* ====================== SEEDED RNG ====================== */
+function xmur3(str){let h=1779033703^str.length;for(let i=0;i<str.length;i++){
+  h=Math.imul(h^str.charCodeAt(i),3432918353);h=(h<<13)|(h>>>19);}
+  return ()=>{h=Math.imul(h^(h>>>16),2246822507);h=Math.imul(h^(h>>>13),3266489909);
+  return (h^=(h>>>16))>>>0;};}
+function mulberry32(a){return ()=>{a|=0;a=(a+0x6D2B79F5)|0;let t=Math.imul(a^(a>>>15),1|a);
+  t=(t+Math.imul(t^(t>>>7),61|t))^t;return ((t^(t>>>14))>>>0)/4294967296;};}
+function makeRng(seed){return mulberry32(xmur3(String(seed))());}
+function shuffled(arr,rng){const a=arr.slice();for(let i=a.length-1;i>0;i--){
+  const j=Math.floor(rng()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+
+/* ====================== STATE ====================== */
+const params=new URLSearchParams(location.search);
+let SEED = params.get("s") || String(Math.floor(Math.random()*1e9));
+const CHALLENGE = params.has("s") ? {target:parseInt(params.get("t"))||null} : null;
+
+let deals=null;            // per-role: {house, houseCard, triples:[[c,c,c],...]}
+let state=null;            // {roleIdx, picks:[], rerollsLeft, triIdx:[]}
+const app=document.getElementById("app");
+
+function buildDeals(seed){
+  const rng=makeRng("SG:"+seed);
+  return ROLES.map(r=>{
+    const pool=shuffled(POOL[r.key],rng);            // needs >=12 per role
+    const houseCands=pool.slice(0,3);
+    const houseCard=houseCands.reduce((a,b)=>b[1]>a[1]?b:a);
+    const triples=[pool.slice(3,6),pool.slice(6,9),pool.slice(9,12)];
+    return {houseCard,triples};
+  });
+}
+function card(c){return {name:c[0],rating:c[1],genre:c[2],credit:c[3]};}
+
+/* ====================== SCORING ====================== */
+function chemistry(picks){
+  const count={};picks.forEach(p=>count[p.genre]=(count[p.genre]||0)+1);
+  let best=0,genre=null;for(const g in count)if(count[g]>best){best=count[g];genre=g;}
+  const bonus=best>=5?40:best>=4?25:best>=3?12:0;
+  return {bonus,genre,n:best};
+}
+function total(picks){return picks.reduce((s,p)=>s+p.rating,0)+chemistry(picks).bonus;}
+
+/* ====================== SCREENS ====================== */
+function start(){
+  const ch = CHALLENGE ? `<div class="challenge">🎯 A friend dares you to beat their band${
+     CHALLENGE.target?`: <b>${CHALLENGE.target}</b>`:''}.<br>Same House, same deals. Good luck.</div>`:'';
+  app.innerHTML=`<div class="screen start">
+    <div>
+      <div class="hero">SUPER<br>GROUP</div>
+      <p class="lede">Draft the greatest band ever assembled — one slot machine at a time. Then face the House.</p>
+    </div>
+    <div class="roles-row">${ROLES.map(r=>`<span>${r.emoji} ${r.key}</span>`).join("")}</div>
+    ${ch}
+    <div>
+      <button class="big" id="play">${CHALLENGE?"TAKE THE CHALLENGE":"START DRAFT"}</button>
+      <p class="tag" style="margin-top:12px">Pick 1 of 3 · ratings hidden · 2 rerolls · beat the House</p>
+    </div>
+  </div>`;
+  document.getElementById("play").onclick=begin;
+}
+
+function begin(){
+  deals=buildDeals(SEED);
+  state={roleIdx:0,picks:[],rerollsLeft:2,triIdx:ROLES.map(_=>0)};
+  draft();
+}
+
+function draft(){
+  const i=state.roleIdx, role=ROLES[i], d=deals[i];
+  const tri=d.triples[state.triIdx[i]].map(card);
+  app.innerHTML=`<div class="screen">
+    <div class="topbar">
+      <div class="brand" style="font-size:15px">SUPERGROUP</div>
+      <div class="dots">${ROLES.map((_,k)=>`<div class="dot ${k<i?'done':k===i?'now':''}"></div>`).join("")}</div>
+    </div>
+    <div class="role-h">
+      <div class="role-emoji">${role.emoji}</div>
+      <div class="role-name">${role.key.toUpperCase()}</div>
+      <div class="role-sub">Draft ${i+1} of 5 · ${role.sub}</div>
+    </div>
+    <div class="cards">
+      ${tri.map((c,idx)=>`<button class="card" data-i="${idx}">
+        <div class="num">${idx+1}</div>
+        <div>
+          <div class="name">${c.name}</div>
+          <div class="genre">${c.genre}</div>
+          <div class="hint">rating hidden — trust your ears</div>
+        </div>
+        <div class="pick-badge">tap →</div>
+      </button>`).join("")}
+    </div>
+    <div class="draft-foot">
+      <button class="ghost reroll" id="reroll" ${state.rerollsLeft<=0||state.triIdx[i]>=2?"disabled":""}>
+        🎰 Reroll this slot
+        <span class="rerolls">${[0,1].map(t=>`<span class="token ${t>=state.rerollsLeft?'used':''}"></span>`).join("")}</span>
+      </button>
+    </div>
+  </div>`;
+  app.querySelectorAll(".card").forEach(el=>el.onclick=()=>{
+    state.picks.push(tri[+el.dataset.i]);
+    if(state.roleIdx>=ROLES.length-1){reveal();}
+    else{state.roleIdx++;draft();}
+  });
+  const rr=document.getElementById("reroll");
+  if(rr)rr.onclick=()=>{if(state.rerollsLeft>0&&state.triIdx[i]<2){state.rerollsLeft--;state.triIdx[i]++;draft();}};
+}
+
+function reveal(){
+  const my=state.picks, chem=chemistry(my), myTot=total(my);
+  const house=deals.map(d=>card(d.houseCard)), hChem=chemistry(house), hTot=total(house);
+  const win=myTot>hTot, tie=myTot===hTot;
+  const res=win?"win":tie?"tie":"lose";
+  const head=win?"YOU WIN 🏆":tie?"DEAD HEAT 🤝":"THE HOUSE WINS";
+  app.innerHTML=`<div class="screen">
+    <div class="brand" style="font-size:15px;text-align:center;margin-bottom:6px">SUPERGROUP</div>
+    <h2 class="res ${res}">${head}</h2>
+    <div class="scoreline">
+      <div class="me ${res==='win'?'':''}">${myTot}</div>
+      <div class="vs">you<br>vs<br>house</div>
+      <div class="them">${hTot}</div>
+    </div>
+    <div class="lineup">
+      ${my.map((p,idx)=>`<div class="row" style="animation-delay:${idx*90}ms">
+        <div class="re">${ROLES[idx].emoji}</div>
+        <div class="info"><div class="nm">${p.name}</div><div class="cr">${p.credit}</div></div>
+        <div class="rt ${p.rating>=90?'hi':''}">${p.rating}</div>
+      </div>`).join("")}
+    </div>
+    <div class="chem ${chem.bonus?'':'none'}">${chem.bonus
+      ? `⚡ Chemistry: ${chem.n}× ${chem.genre} band → +${chem.bonus}`
+      : `No chemistry bonus — try stacking one genre next time`}</div>
+    <div class="house">
+      <h3>THE HOUSE BAND · ${hTot}</h3>
+      ${house.map((p,idx)=>`<div class="hrow"><span>${ROLES[idx].emoji} ${p.name}</span><span>${p.rating}</span></div>`).join("")}
+      ${hChem.bonus?`<div class="hrow"><span>⚡ ${hChem.n}× ${hChem.genre}</span><span>+${hChem.bonus}</span></div>`:``}
+    </div>
+    <div class="foot">
+      <button class="big" id="share">📲 Challenge a friend to beat ${myTot}</button>
+      <button class="ghost" id="again">🎲 New band</button>
+    </div>
+    <div class="credit">Seed ${SEED} · ratings are a curated ground truth, anchored to real credentials</div>
+  </div>`;
+  document.getElementById("again").onclick=()=>{
+    SEED=String(Math.floor(Math.random()*1e9));history.replaceState(null,"",location.pathname);begin();};
+  document.getElementById("share").onclick=()=>shareRun(myTot,hTot,my);
+}
+
+async function shareRun(myTot,hTot,my){
+  const url=`${location.origin}${location.pathname}?s=${SEED}&t=${myTot}`;
+  const lineup=my.map((p,i)=>`${ROLES[i].emoji}${p.name}`).join("  ");
+  const text=`🎸 My SUPERGROUP scored ${myTot} and ${myTot>hTot?'beat':'lost to'} the House (${hTot}).\n${lineup}\nBeat my band 👉 `;
+  try{
+    if(navigator.share){await navigator.share({title:"SUPERGROUP",text,url});return;}
+  }catch(e){if(e&&e.name==="AbortError")return;}
+  try{await navigator.clipboard.writeText(text+url);toast("Challenge link copied!");}
+  catch(e){toast(url);}
+}
+function toast(msg){const t=document.getElementById("toast");t.textContent=msg;t.classList.add("show");
+  clearTimeout(toast._t);toast._t=setTimeout(()=>t.classList.remove("show"),2200);}
+
+start();
+</script>
+</body>
+</html>
